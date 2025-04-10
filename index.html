@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Finanças</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Controle Financeiro</h1>
+    </header>
+
+    <main>
+        <div class="dashboard">
+            <div class="card">
+                <h3>Saldo Total</h3>
+                <p class="valor-destaque" id="saldo-total">R$ 0,00</p>
+            </div>
+            <div class="card">
+                <h3>Receitas</h3>
+                <p class="valor-destaque receita" id="total-receitas">R$ 0,00</p>
+            </div>
+            <div class="card">
+                <h3>Despesas</h3>
+                <p class="valor-destaque despesa" id="total-despesas">R$ 0,00</p>
+            </div>
+        </div>
+
+        <div class="forms-container">
+            <!-- Seção de Renda Simplificada -->
+            <div class="renda-rapida">
+                <div class="renda-rapida-header">
+                    <h3>Adicionar Renda</h3>
+                </div>
+                <div class="renda-rapida-content">
+                    <div class="renda-input-group">
+                        <span class="renda-currency">R$</span>
+                        <input type="number" id="valor-renda-rapida" placeholder="0.00" step="0.01">
+                        <button onclick="adicionarRendaRapida()" class="btn-renda-rapida">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="send-icon">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Despesas -->
+            <div class="container container-despesa">
+                <h2>Adicionar Despesa</h2>
+                <div class="form-group">
+                    <label for="descricao-despesa">Descrição:</label>
+                    <input type="text" id="descricao-despesa" placeholder="Ex: Aluguel, Mercado">
+                </div>
+                <div class="form-group">
+                    <label for="valor-despesa">Valor (R$):</label>
+                    <input type="number" id="valor-despesa" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="data-despesa">Data:</label>
+                    <input type="date" id="data-despesa">
+                </div>
+                <div class="form-group">
+                    <label for="categoria-despesa">Categoria:</label>
+                    <select id="categoria-despesa">
+                        <option value="alimentacao">Alimentação</option>
+                        <option value="transporte">Transporte</option>
+                        <option value="moradia">Moradia</option>
+                        <option value="lazer">Lazer</option>
+                        <option value="saude">Saúde</option>
+                        <option value="educacao">Educação</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <button onclick="adicionarDespesa()" class="btn-adicionar btn-despesa">Adicionar Despesa</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <h2>Filtrar Transações</h2>
+            <div class="filtros">
+                <div class="form-group">
+                    <label for="filtro-categoria">Categoria:</label>
+                    <select id="filtro-categoria" onchange="atualizarInterface()">
+                        <option value="todas">Todas</option>
+                        <option value="alimentacao">Alimentação</option>
+                        <option value="transporte">Transporte</option>
+                        <option value="moradia">Moradia</option>
+                        <option value="lazer">Lazer</option>
+                        <option value="saude">Saúde</option>
+                        <option value="educacao">Educação</option>
+                        <option value="salario">Salário</option>
+                        <option value="investimentos">Investimentos</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-tipo">Tipo:</label>
+                    <select id="filtro-tipo" onchange="atualizarInterface()">
+                        <option value="todos">Todos</option>
+                        <option value="receita">Receitas</option>
+                        <option value="despesa">Despesas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-mes">Mês:</label>
+                    <select id="filtro-mes" onchange="atualizarInterface()">
+                        <option value="todos">Todos</option>
+                        <option value="0">Janeiro</option>
+                        <option value="1">Fevereiro</option>
+                        <option value="2">Março</option>
+                        <option value="3">Abril</option>
+                        <option value="4">Maio</option>
+                        <option value="5">Junho</option>
+                        <option value="6">Julho</option>
+                        <option value="7">Agosto</option>
+                        <option value="8">Setembro</option>
+                        <option value="9">Outubro</option>
+                        <option value="10">Novembro</option>
+                        <option value="11">Dezembro</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h2>Transações</h2>
+            <div id="lista-transacoes" class="lista-transacoes">
+                <!-- As transações serão adicionadas aqui -->
+            </div>
+        </div>
+
+        <div class="container">
+            <h2>Relatórios</h2>
+            <div class="graficos">
+                <div class="grafico-container">
+                    <h3>Despesas por Categoria</h3>
+                    <canvas id="grafico-categorias"></canvas>
+                </div>
+                <div class="grafico-container">
+                    <h3>Receitas vs Despesas</h3>
+                    <canvas id="grafico-balanco"></canvas>
+                </div>
+            </div>
+            <div class="acoes">
+                <button onclick="exportarDados()" class="btn-secundario">Exportar Dados (CSV)</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Controle Financeiro - Desenvolvido para você</p>
+    </footer>
+
+    <div class="tema-switch" id="tema-switch">
+        <span class="icon">🌓</span>
+        <span class="text">Alternar Tema</span>
+    </div>
+
+    <div class="config-toggle" id="config-toggle">⚙️</div>
+
+    <div class="config-panel" id="config-panel">
+        <div class="config-header">
+            <h3>Configurações</h3>
+            <button class="config-close" id="config-close">✕</button>
+        </div>
+
+        <div class="config-section">
+            <h4>Tema</h4>
+            <div class="theme-options">
+                <div class="theme-option" id="theme-light" style="background-color: #f0f2f5;" data-theme="light"></div>
+                <div class="theme-option" id="theme-dark" style="background-color: #1a1a1a;" data-theme="dark"></div>
+            </div>
+        </div>
+
+        <div class="config-section">
+            <h4>Cores</h4>
+            <div class="color-options">
+                <div class="color-option color-blue" data-color="blue"></div>
+                <div class="color-option color-green" data-color="green"></div>
+                <div class="color-option color-purple" data-color="purple"></div>
+                <div class="color-option color-orange" data-color="orange"></div>
+                <div class="color-option color-red" data-color="red"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
